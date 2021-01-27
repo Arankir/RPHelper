@@ -307,10 +307,14 @@ void FormAddPartnerAgzs::on_PushButtonAcceptAgzsData_clicked() {
         data.vCode = DataBase::getLxKeyCode("PR_AGZSData", true);
         data.id = QString::number(data.vCode);
         data.cDate = QDateTime::currentDateTime();
-        DataBase::insertAgzsData(data);
+        if (DataBase::insertAgzsData(data)) {
+            QMessageBox::information(this, tr("Успешно!"), tr("Данные были добавлены!"));
+        }
     } else {
         data.id = QString::number(data.vCode);
-        DataBase::updateAgzsData(data);
+        if (DataBase::updateAgzsData(data)) {
+            QMessageBox::information(this, tr("Успешно!"), tr("Данные были обновлены!"));
+        }
     }
 }
 
@@ -341,6 +345,8 @@ void FormAddPartnerAgzs::on_ButtonRegisterCityMobile_clicked() {
 void FormAddPartnerAgzs::on_PushButtonAcceptAgzsColumns_clicked() {
     QList<AgzsColumn> columnsToDb = UiToColumns();
     QList<AgzsColumn> columnsDb = DataBase::getColumnsDb(ui->ComboBoxAgzs->currentText());
+    int in = 0, up = 0, de = 0;
+    int ine = 0, upe = 0, dee = 0;
     for (auto &columnDb: columnsDb) {
         auto iterator = std::find_if(columnsToDb.begin(),
                                      columnsToDb.end(),
@@ -348,18 +354,53 @@ void FormAddPartnerAgzs::on_PushButtonAcceptAgzsColumns_clicked() {
                                          return columnToDb.vCode == columnDb.vCode;
                                      });
         if (iterator != columnsToDb.end()) {
-            DataBase::updateAgzsColumn(*iterator);
+            if (DataBase::updateAgzsColumn(*iterator)) {
+                ++up;
+            } else {
+                ++upe;
+            }
         } else {
-            DataBase::deleteAgzsColumn(columnDb.vCode);
+            if (DataBase::deleteAgzsColumn(columnDb.vCode)) {
+                ++de;
+            } else {
+                ++dee;
+            }
         }
     }
     for (auto &column: columnsToDb) {
         if (column.vCode == 0) {
             column.vCode = DataBase::getLxKeyCode("PR_Columns", true);
             column.cDate = QDateTime::currentDateTime();
-            DataBase::insertAgzsColumn(column);
+            if (DataBase::insertAgzsColumn(column)) {
+                ++in;
+            } else {
+                ++ine;
+            }
         }
     }
+    if (in <= 0 && up <= 0 && de <= 0 && ine <= 0 && upe <= 0 && dee <= 0) {
+        return;
+    }
+    QStringList message;
+    if (in > 0) {
+        message.append(tr("Добавлено %1 колонок").arg(in));
+    }
+    if (up > 0) {
+        message.append(tr("Обновлено %1 колонок").arg(up));
+    }
+    if (de > 0) {
+        message.append(tr("Удалено %1 колонок").arg(de));
+    }
+    if (ine > 0) {
+        message.append(tr("Не удалось добавить %1 колонок").arg(ine));
+    }
+    if (upe > 0) {
+        message.append(tr("Не удалось обновить %1 колонок").arg(upe));
+    }
+    if (dee > 0) {
+        message.append(tr("Не удалось удалить %1 колонок").arg(dee));
+    }
+    QMessageBox::information(this, tr("Внимание!"), message.join("\n"));
 }
 
 void FormAddPartnerAgzs::on_PushButtonAddColumn_clicked() {
@@ -432,7 +473,11 @@ void FormAddPartnerAgzs::on_PushButtonAcceptPriceYandex_clicked() {
     priceYandex.agzsName = ui->LineEditDataName->text();
     priceYandex.agzs = ui->LineEditDataNumber->text().toInt();
     priceYandex.link = ui->LineEditDataVcode->text().toInt();
-    DataBase::updateLastAgzsPrice(priceYandex);
+    if (DataBase::updateLastAgzsPrice(priceYandex)) {
+        QMessageBox::information(this, tr("Успешно!"), tr("Данные цен по Яндексу успешно обновлены!"));
+    } else {
+        QMessageBox::warning(this, tr("Ошибка!"), tr("Данные цен по Яндексу не обновлены!"));
+    }
 }
 
 void FormAddPartnerAgzs::on_PushButtonAcceptPriceCityMobile_clicked() {
@@ -440,7 +485,11 @@ void FormAddPartnerAgzs::on_PushButtonAcceptPriceCityMobile_clicked() {
     priceCityMobile.agzsName = ui->LineEditDataName->text();
     priceCityMobile.agzs = ui->LineEditDataNumber->text().toInt();
     priceCityMobile.link = ui->LineEditDataVcode->text().toInt();
-    DataBase::updateLastAgzsPrice(priceCityMobile);
+    if (DataBase::updateLastAgzsPrice(priceCityMobile)) {
+        QMessageBox::information(this, tr("Успешно!"), tr("Данные цен по Ситимобилу успешно обновлены!"));
+    } else {
+        QMessageBox::warning(this, tr("Ошибка!"), tr("Данные цен по Ситимобилу не обновлены!"));
+    }
 }
 
 void FormAddPartnerAgzs::on_PushButtonAcceptPrice_clicked() {
@@ -456,7 +505,11 @@ void FormAddPartnerAgzs::on_PushButtonAcceptPriceFromDateYandex_clicked() {
     priceYandex.cDate = QDateTime::currentDateTime();
     priceYandex.dateStart = ui->DateTimeEditPriceUpdateTime->dateTime();
     priceYandex.vCode = DataBase::getLxKeyCode("PR_AGZSPrice", true);
-    DataBase::insertAgzsPrice(priceYandex);
+    if (DataBase::insertAgzsPrice(priceYandex)) {
+        QMessageBox::information(this, tr("Успешно!"), tr("Данные цен по Яндексу успешно добавлены!"));
+    } else {
+        QMessageBox::warning(this, tr("Ошибка!"), tr("Данные цен по Яндексу не добавлены!"));
+    }
 }
 
 void FormAddPartnerAgzs::on_PushButtonAcceptPriceFromDateCityMobile_clicked() {
@@ -467,7 +520,11 @@ void FormAddPartnerAgzs::on_PushButtonAcceptPriceFromDateCityMobile_clicked() {
     priceCityMobile.cDate = QDateTime::currentDateTime();
     priceCityMobile.dateStart = ui->DateTimeEditPriceUpdateTime->dateTime();
     priceCityMobile.vCode = DataBase::getLxKeyCode("PR_AGZSPrice", true);
-    DataBase::insertAgzsPrice(priceCityMobile);
+    if (DataBase::insertAgzsPrice(priceCityMobile)) {
+        QMessageBox::information(this, tr("Успешно!"), tr("Данные цен по Яндексу успешно добавлены!"));
+    } else {
+        QMessageBox::warning(this, tr("Ошибка!"), tr("Данные цен по Яндексу не добавлены!"));
+    }
 }
 
 void FormAddPartnerAgzs::on_PushButtonAcceptPriceFromDate_clicked() {
