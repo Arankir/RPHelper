@@ -7,6 +7,8 @@
 #include <QFormLayout>
 #include <QVBoxLayout>
 #include <QDebug>
+#include <QStandardItemModel>
+#include <QMenu>
 #include "database.h"
 
 namespace Ui {
@@ -22,12 +24,17 @@ public:
     ~FormBadTransactions();
 
 private slots:
+    void init();
     void on_PushButtonConnect_clicked();
-    void on_PushButtonFindAgzs_clicked();
+    void findAgzs(QDateTime dateStart, QDateTime dateEnd);
+    QMenu *createMenu();
 
     void on_CheckBoxCheckAll_stateChanged(int arg1);
     void checkBoxAgzs_stateChanged(int arg1);
 
+    void on_PushButtonFind_clicked();
+
+    void goToTransaction();
 private:
     Ui::FormBadTransactions *ui;
     QString login_ = "";

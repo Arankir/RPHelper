@@ -46,17 +46,15 @@ private slots:
     void on_PushButtonDeleteRow_clicked();
     void on_PushButtonReplaceColumns_clicked();
 
+    void on_PushButtonAcceptPriceYandex_clicked();
+    void on_PushButtonAcceptPriceCityMobile_clicked();
     void on_PushButtonAcceptPrice_clicked();
 
-    void on_PushButtonAcceptPriceYandex_clicked();
-
-    void on_PushButtonAcceptPriceCityMobile_clicked();
-
     void on_PushButtonAcceptPriceFromDateYandex_clicked();
-
     void on_PushButtonAcceptPriceFromDateCityMobile_clicked();
-
     void on_PushButtonAcceptPriceFromDate_clicked();
+
+    void on_PushButtonFindColumn_clicked();
 
 private:
     Ui::FormAddPartnerAgzs *ui;

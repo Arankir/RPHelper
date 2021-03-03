@@ -24,6 +24,7 @@ ui(new Ui::FormAddPartnerAgzs) {
     ui->setupUi(this);
     initColumnsTables();
     initAgzs();
+    ui->ToolBoxAgzs->setCurrentIndex(0);
 
     ui->DateTimeEditPriceUpdateTime->setDateTime(QDateTime::currentDateTime());
 
@@ -36,7 +37,7 @@ FormAddPartnerAgzs::~FormAddPartnerAgzs() {
 
 #define InitStart {
 void FormAddPartnerAgzs::initAgzs() {
-    auto agzss = DataBase::getAgzs(QDateTime(QDate(2021, 1, 1)), QDateTime::currentDateTime());
+    auto agzss = DataBase::getAgzs(QDateTime(QDate(QDate::currentDate().year(), 1, 1)), QDateTime::currentDateTime());
     std::sort(agzss.begin(), agzss.end());
     agzss.erase(std::unique(agzss.begin(), agzss.end()), agzss.end());
 
@@ -84,12 +85,20 @@ void FormAddPartnerAgzs::on_ComboBoxAgzs_currentIndexChanged(int aIndex) {
 
     const QString agzs = ui->ComboBoxAgzs->currentText();
 
-    dataToUi(DataBase::getData(agzs));
+    AgzsData data = DataBase::getData(agzs);
+    if (data.AgzsL == "") {
+        data.AgzsL = agzs;
+        data.cDate = QDateTime::currentDateTime();
+        data.vCode = DataBase::getLxKeyCode("PR_AGZSData", true);
+        data.id = data.vCode;
+        DataBase::insertAgzsData(data);
+    }
+    dataToUi(data);
     priceToUi(DataBase::getPrice(agzs, c_yandexIndex), c_yandexIndex);
     priceToUi(DataBase::getPrice(agzs, c_cityMobileIndex), c_cityMobileIndex);
-    columnsToUi(DataBase::getColumnsDb(agzs), DataBase::getColumnsAdast(agzs,
-                                                    ui->LineEditDataP->text(),
-                                                    ui->LineEditDataNumber->text().toInt()));
+//    columnsToUi(DataBase::getColumnsDb(agzs), DataBase::getColumnsAdast(agzs,
+//                                                    ui->LineEditDataP->text(),
+//                                                    ui->LineEditDataNumber->text().toInt()));
 }
 
 void FormAddPartnerAgzs::on_PushButtonCancel_clicked() {
@@ -521,9 +530,9 @@ void FormAddPartnerAgzs::on_PushButtonAcceptPriceFromDateCityMobile_clicked() {
     priceCityMobile.dateStart = ui->DateTimeEditPriceUpdateTime->dateTime();
     priceCityMobile.vCode = DataBase::getLxKeyCode("PR_AGZSPrice", true);
     if (DataBase::insertAgzsPrice(priceCityMobile)) {
-        QMessageBox::information(this, tr("Успешно!"), tr("Данные цен по Яндексу успешно добавлены!"));
+        QMessageBox::information(this, tr("Успешно!"), tr("Данные цен по Ситимобилу успешно добавлены!"));
     } else {
-        QMessageBox::warning(this, tr("Ошибка!"), tr("Данные цен по Яндексу не добавлены!"));
+        QMessageBox::warning(this, tr("Ошибка!"), tr("Данные цен по Ситимобилу не добавлены!"));
     }
 }
 
@@ -532,3 +541,10 @@ void FormAddPartnerAgzs::on_PushButtonAcceptPriceFromDate_clicked() {
     on_PushButtonAcceptPriceFromDateCityMobile_clicked();
 }
 #define AgzsPriceEnd }
+
+void FormAddPartnerAgzs::on_PushButtonFindColumn_clicked() {
+    const QString agzs = ui->ComboBoxAgzs->currentText();
+    columnsToUi(DataBase::getColumnsDb(agzs), DataBase::getColumnsAdast(agzs,
+                                                    ui->LineEditDataP->text(),
+                                                    ui->LineEditDataNumber->text().toInt()));
+}

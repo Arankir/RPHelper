@@ -8,6 +8,7 @@
 #include <QtSql/QSqlDatabase>
 #include <QtSql/QSqlError>
 #include <QtSql/QSqlQuery>
+#include <QtSql/QSqlRecord>
 
 const QString c_defaultLogin = "grimnir";
 const QString c_defaultPassword = "Gfhf743Djpbr";
@@ -52,7 +53,7 @@ struct AgzsPrice {
 
 struct AgzsData {
     QString agzsName;
-    int agzs;
+    int agzs = -1;
     QDateTime cDate;
     int vCode;
     QString id;
@@ -102,7 +103,7 @@ public:
     static int getLxKeyCode(const QString &key, bool autoIncrement, const QString &login = c_defaultLogin,
                             const QString &password = c_defaultPassword, bool isShowMessage = c_defaultMessage);
     static bool updateAgzsData(const QString &aAgzsName, const int &aAgzs, const QString &aId, const QString &aAdress,
-                               const float &aLatitude, const float &aLongitude, const int &aColumnsCount,
+                               const double &aLatitude, const double &aLongitude, const int &aColumnsCount,
                                const QString &aAgzsL, const QString &aAgzsP, const QString &aCityMobileToken,
                                const QString &aYandexToken, const int &aVcode, const QString &login = c_defaultLogin,
                                const QString &password = c_defaultPassword, bool isShowMessage = c_defaultMessage);
@@ -153,6 +154,12 @@ public:
                                 const QString &password = c_defaultPassword, bool isShowMessage = c_defaultMessage);
     static bool insertAgzsPrice(const AgzsPrice &price, const QString &login = c_defaultLogin,
                                 const QString &password = c_defaultPassword, bool isShowMessage = c_defaultMessage);
+    static QList<QList<QVariant>> getBadTransaction(const int &aAgzsNumber, const QDateTime &aDateStart,
+                                                    const QDateTime &aDateEnd, const int &aFuel,
+                                                    const QString &login = c_defaultLogin,
+                                                    const QString &password = c_defaultPassword,
+                                                    bool isShowMessage = c_defaultMessage);
+
 signals:
 
 };

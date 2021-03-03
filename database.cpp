@@ -289,7 +289,7 @@ int DataBase::getLxKeyCode(const QString &key, bool autoIncrement, const QString
 }
 
 bool DataBase::updateAgzsData(const QString &aAgzsName, const int &aAgzs, const QString &aId,
-                              const QString &aAdress, const float &aLatitude, const float &aLongitude,
+                              const QString &aAdress, const double &aLatitude, const double &aLongitude,
                               const int &aColumnsCount, const QString &aAgzsL, const QString &aAgzsP,
                               const QString &aCityMobileToken, const QString &aYandexToken, const int &aVcode,
                               const QString &aLogin, const QString &aPassword, bool isShowMessage) {
@@ -309,7 +309,7 @@ bool DataBase::updateAgzsData(const QString &aAgzsName, const int &aAgzs, const 
                       ",longitude = :Longitude "
                       ",ColumnsCount = :Columns "
                       ",AGZSL = :AGZSL "
-                      ",AGZSP = :AgzsP "
+                      ",AGZSP = :AGZSP "
                       ",CityMobileToken = :CityMobileToken "
                       ",YandexToken = :YandexToken "
                       "WHERE VCode = :VCode");
@@ -364,7 +364,7 @@ bool DataBase::insertAgzsData(const QString &aAgzsName, const int &aAgzs, const 
                       ",:Longitude "
                       ",:Columns "
                       ",:AGZSL "
-                      ",:AgzsP "
+                      ",:AGZSP "
                       ",DEFAULT "
                       ",:CityMobileToken "
                       ",:YandexToken "
@@ -681,4 +681,32 @@ bool DataBase::insertAgzsPrice(const AgzsPrice &aPrice, const QString &aLogin, c
                            aPrice.a95_premium, aPrice.a98, aPrice.a98_premium, aPrice.a100, aPrice.a100_premium,
                            aPrice.propane, aPrice.metan, aPrice.iPartner, aPrice.dateStart, aLogin, aPassword,
                            isShowMessage);
+}
+
+QList<QList<QVariant> > DataBase::getBadTransaction(const int &aAgzsNumber, const QDateTime &aDateStart,
+                                                    const QDateTime &aDateEnd, const int &aFuel, const QString &aLogin,
+                                                    const QString &aPassword, bool isShowMessage) {
+    QList<QList<QVariant>> list;
+    QSqlDatabase db;
+    if (!connectDB(db, aLogin, aPassword, isShowMessage)) {
+        qWarning() << "getBadTransaction db isn't open";
+        return list;
+    }
+    QSqlQuery query(db);
+    query.exec("{CALL [grimnir].[agzs].[dbo].[PR_CheckTransError] (" +
+               QString::number(aAgzsNumber) + ",'" +
+               aDateStart.toString("yyyyMMdd hh:mm:ss") + "','" +
+               aDateEnd.toString("yyyyMMdd hh:mm:ss") + "'," +
+               QString::number(aFuel) + ")}");
+    qDebug() << query.lastQuery() << query.lastError();
+    if (query.next()) {
+        QList<QVariant> row;
+        for (int column = 0; column < query.record().count(); ++column) {
+            row.append(query.value(column));
+        }
+        list.append(row);
+    }
+    db.close();
+    return list;
+
 }

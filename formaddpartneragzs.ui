@@ -27,36 +27,6 @@
       </widget>
      </item>
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_5">
-       <item>
-        <widget class="QPushButton" name="pushButton_8">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="text">
-          <string>Создать новую АГЗС</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLineEdit" name="LineEditNewAgzsName">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="placeholderText">
-          <string>agzs99</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-     <item>
       <widget class="QPushButton" name="PushButtonCancel">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
@@ -83,13 +53,13 @@ QToolBox {
 };</string>
      </property>
      <property name="currentIndex">
-      <number>2</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="page">
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>-146</y>
+        <y>0</y>
         <width>935</width>
         <height>435</height>
        </rect>
@@ -667,7 +637,7 @@ color: rgb(251, 254, 255);</string>
         <x>0</x>
         <y>0</y>
         <width>949</width>
-        <height>289</height>
+        <height>291</height>
        </rect>
       </property>
       <attribute name="label">
@@ -712,6 +682,13 @@ color: rgb(251, 254, 255);</string>
        </item>
        <item>
         <layout class="QVBoxLayout" name="verticalLayout_14">
+         <item>
+          <widget class="QPushButton" name="PushButtonFindColumn">
+           <property name="text">
+            <string>Найти</string>
+           </property>
+          </widget>
+         </item>
          <item>
           <widget class="QPushButton" name="PushButtonAddColumn">
            <property name="text">
@@ -774,7 +751,7 @@ color: rgb(251, 254, 255);</string>
         <x>0</x>
         <y>0</y>
         <width>949</width>
-        <height>289</height>
+        <height>291</height>
        </rect>
       </property>
       <attribute name="label">
